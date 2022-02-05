@@ -14,7 +14,7 @@ jobs:
       - name: build
         run: make build
       - name: version
-        run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
+        run: echo "::set-output name=version::$(./caddy -v)"
         id: version
       - name: release
         uses: actions/create-release@v1
