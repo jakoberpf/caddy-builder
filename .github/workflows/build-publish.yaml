@@ -20,9 +20,8 @@ jobs:
             curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-xcaddy.list
             echo "Installing XCaddy"
             sudo apt update && sudo apt install xcaddy
-            echo 'PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc && exec bash && echo $PATH
             echo "Buildung custom Caddy"
-            xcaddy build --with github.com/caddy-dns/cloudflare
+            PATH=$PATH:/usr/local/go/bin xcaddy build --with github.com/caddy-dns/cloudflare
       - name: version
         run: echo "::set-output name=version::$(./caddy -v)"
         id: version
