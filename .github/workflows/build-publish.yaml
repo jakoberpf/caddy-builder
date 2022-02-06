@@ -11,21 +11,27 @@ jobs:
     name: "Build and Publish Custom Caddy Version"
     runs-on: ubuntu-latest
     steps:
+      
       - uses: actions/checkout@v2
+      
       - uses: actions/setup-go@v2
         with:
           go-version: '~1.16'
+      
       - name: install-xcaddy
         run: |
             curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/gpg.key' | sudo apt-key add -
             curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-xcaddy.list
             sudo apt update && sudo apt install xcaddy
+      
       - name: build-custom-caddy
         run: |
             PATH=$PATH:/usr/local/go/bin xcaddy build --with github.com/caddy-dns/cloudflare
+      
       - name: version
         run: echo "::set-output name=version::$(./caddy version)"
         id: version
+      
       - name: release
         uses: actions/create-release@v1
         id: create_release
@@ -37,3 +43,33 @@ jobs:
           # body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: upload amd64 binaries
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./caddy
+          asset_name: caddy
+          # asset_content_type: application/gzip
+      
+      # - name: upload darwin artifact
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./bin/azblogfilter.darwin-amd64.tar.gz
+      #     asset_name: azblogfilter.darwin-amd64.tar.gz
+      #     asset_content_type: application/gzip
+      
+      # - name: upload windows artifact
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./bin/azblogfilter.windows-amd64.zip
+      #     asset_name: azblogfilter.windows-amd64.zip
+      #     asset_content_type: application/zip
