@@ -33,10 +33,10 @@ jobs:
         id: version
 
       - name: Build release notes
-        run: echo "${{ github.sha }} of release ${{ steps.version.outputs.version }}" > Release.txt
+        run: echo "${{ github.sha }} of release ${{ steps.version.outputs.version }}" > RELEASE.txt
 
       - name: Show release notes
-        run: cat Release.txt
+        run: cat RELEASE.txt
 
       - name: Release version
         uses: softprops/action-gh-release@v1
@@ -44,8 +44,8 @@ jobs:
         with:
           name: ${{ steps.version.outputs.version }}
           tag_name: ${{ github.ref }}
-          files: 
-            Release.txt
+          files: |
+            RELEASE.txt
             caddy
 
       # - name: upload amd binaries
