@@ -5,7 +5,9 @@ on:
   push:
     branches:
       - main
-
+  schedule:
+    - cron: "0 * * * *"
+    
 jobs:
   build-push:
     name: "Build and Publish Custom Caddy Version"
@@ -26,7 +28,7 @@ jobs:
       
       - name: build-custom-caddy
         run: |
-            PATH=$PATH:/usr/local/go/bin xcaddy build --with github.com/caddy-dns/cloudflare
+            PATH=$PATH:/usr/local/go/bin xcaddy build --with github.com/caddy-dns/cloudflare --with github.com/mholt/caddy-l4
       
       - name: version
         run: echo "::set-output name=version::$(./caddy version | cut -d' ' -f1)"
